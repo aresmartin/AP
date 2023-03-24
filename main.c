@@ -29,59 +29,55 @@ int main(int argc, char **argv) {
     cvWaitKey(0);
 
     // Crea la imagen para la componete azul
-    IplImage* ImgBLUE = cvCreateImage(cvSize(Img->width, Img->height), IPL_DEPTH_8U, 3);
-    IplImage* ImgRED = cvCreateImage(cvSize(Img->width, Img->height), IPL_DEPTH_8U, 3);
-    IplImage* ImgGREEN = cvCreateImage(cvSize(Img->width, Img->height), IPL_DEPTH_8U, 3);
+    IplImage* ImgInfSup = cvCreateImage(cvSize(Img->width, Img->height), IPL_DEPTH_8U, 3);
 
     int fila, columna;
 
-    for (fila = 0; fila < Img->height; fila++) {
+    for (fila = 0; fila < Img->height/2; fila++) {
 
+        int mitadImg = (ImgInfSup->height)/2;
         unsigned char *pImg = (unsigned char *) Img->imageData + fila * Img->widthStep;
-        unsigned char *pImgBLUE = (unsigned char *) ImgBLUE->imageData + fila * ImgBLUE->widthStep;
-        unsigned char *pImgRED = (unsigned char *) ImgRED->imageData + fila * ImgRED->widthStep;
-        unsigned char *pImgGREEN = (unsigned char *) ImgGREEN->imageData + fila * ImgGREEN->widthStep;
+        unsigned char *pImgInfSup = (unsigned char *) ImgInfSup->imageData  + (fila + mitadImg) * ImgInfSup->widthStep;    
 
         for (columna = 0; columna < Img->width; columna++) {
 
             //Imagen BLUE
-            *pImgBLUE++ = *pImg++;
-            *pImgRED++ = 0;
-            *pImgGREEN++ = 0;
-            
-            *pImgBLUE++ = 0;
-            *pImgRED++ = 0;
-            *pImgGREEN++ = *pImg++;
-          
-            *pImgBLUE++ = 0;
-            *pImgRED++ = *pImg++;
-            *pImgGREEN++ = 0;
-            
-            
+            *pImgInfSup++ = *pImg++;
+            *pImgInfSup++ = *pImg++;
+            *pImgInfSup++ = *pImg++;       
         }
     }
+    
+    for (fila = 0; fila < Img->height/2; fila++) {
+
+        int mitadImg = ImgInfSup->height/2;
+        unsigned char *pImg = (unsigned char *) Img->imageData + (fila + mitadImg) * Img->widthStep;
+        unsigned char *pImgInfSup = (unsigned char *) ImgInfSup->imageData  + fila  * ImgInfSup->widthStep;    
+
+        for (columna = 0; columna < Img->width; columna++) {
+
+            //Imagen BLUE
+            *pImgInfSup++ = *pImg++;
+            *pImgInfSup++ = *pImg++;
+            *pImgInfSup++ = *pImg++;       
+        }
+    }
+    
+    
 
     // crea y muestras las ventanas con las im genes
-    cvNamedWindow("Componente BLUE", CV_WINDOW_AUTOSIZE);
-    cvNamedWindow("Componente RED", CV_WINDOW_AUTOSIZE);
-    cvNamedWindow("Componente GREEN", CV_WINDOW_AUTOSIZE);
-    cvShowImage("Componente BLUE", ImgBLUE);
-    cvShowImage("Componente RED", ImgRED);
-    cvShowImage("Componente GREEN", ImgGREEN);
+    cvNamedWindow("Imagen Superior Inferior", CV_WINDOW_AUTOSIZE);
+    cvShowImage("Imagen Superior Inferior", ImgInfSup);
 
     cvWaitKey(0);
 
     // memory release for images before exiting the application
     cvReleaseImage(&Img);
-    cvReleaseImage(&ImgBLUE);
-    cvReleaseImage(&ImgRED);
-    cvReleaseImage(&ImgGREEN);
+    cvReleaseImage(&ImgInfSup);
 
     // Self-explanatory
     cvDestroyWindow(argv[1]);
-    cvDestroyWindow("Componente BLUE");
-    cvDestroyWindow("Componente RED");
-    cvDestroyWindow("Componente GREEN");
+    cvDestroyWindow("Imagen Superior Inferior");
 
     return EXIT_SUCCESS;
 }
